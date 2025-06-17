@@ -29,7 +29,7 @@
   --page-border: 9px solid transparent;
   --spreadHorizontalWrapped-margin-LR: -3.5px;
   --loading-icon-delay: 400ms;
-  --focus-ring-color: light-dark(#0060df, #0df);
+  --focus-ring-color: #0060df;
   --focus-ring-outline: 2px solid var(--focus-ring-color);
 
   @media screen and (forced-colors: active) {
@@ -76,16 +76,20 @@
     --hcm-highlight-filter: invert(100%);
   }
 
-  &.copyAll {
+}
+
+.pdfViewer.copyAll {
     cursor: wait;
   }
 
-  .canvasWrapper {
+.pdfViewer .canvasWrapper {
     overflow: hidden;
     width: 100%;
     height: 100%;
 
-    canvas {
+}
+
+.pdfViewer .canvasWrapper canvas {
       position: absolute;
       top: 0;
       left: 0;
@@ -95,11 +99,10 @@
       height: 100%;
       contain: content;
 
-      .structTree {
-        contain: strict;
-      }
-    }
-  }
+}
+
+.pdfViewer .canvasWrapper canvas .structTree {
+  contain: strict;
 }
 
 .pdfViewer .page {
@@ -149,7 +152,8 @@
 
 .pdfViewer:is(.scrollHorizontal, .scrollWrapped),
 .spread {
-  margin-inline: 3.5px;
+  margin-left: 3.5px;
+  margin-right: 3.5px;
   text-align: center;
 }
 
@@ -162,7 +166,8 @@
 .pdfViewer.removePageBorders,
 /*#endif*/
 .pdfViewer:is(.scrollHorizontal, .scrollWrapped) .spread {
-  margin-inline: 0;
+  margin-left: 0;
+  margin-right: 0;
 }
 
 .spread :is(.page, .dummyPage),
@@ -173,13 +178,15 @@
 
 .spread .page,
 .pdfViewer:is(.scrollHorizontal, .scrollWrapped) .page {
-  margin-inline: var(--spreadHorizontalWrapped-margin-LR);
+  margin-left: var(--spreadHorizontalWrapped-margin-LR);
+  margin-right: var(--spreadHorizontalWrapped-margin-LR);
 }
 
 /*#if GENERIC*/
 .pdfViewer.removePageBorders .spread .page,
 .pdfViewer.removePageBorders:is(.scrollHorizontal, .scrollWrapped) .page {
-  margin-inline: 5px;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 /*#endif*/
 

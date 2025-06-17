@@ -35,66 +35,51 @@
   --doorhanger-icon-opacity: 0.9;
   --doorhanger-height: 8px;
 
-  --main-color: light-dark(rgb(12 12 13), rgb(249 249 250));
-  --body-bg-color: light-dark(rgb(212 212 215), rgb(42 42 46));
-  --progressBar-color: light-dark(rgb(10 132 255), rgb(0 96 223));
-  --progressBar-bg-color: light-dark(rgb(221 221 222), rgb(40 40 43));
-  --progressBar-blend-color: light-dark(rgb(116 177 239), rgb(20 68 133));
-  --scrollbar-color: light-dark(auto, rgb(121 121 123));
-  --scrollbar-bg-color: light-dark(auto, rgb(35 35 39));
-  --toolbar-icon-bg-color: light-dark(rgb(0 0 0), rgb(255 255 255));
-  --toolbar-icon-hover-bg-color: light-dark(rgb(0 0 0), rgb(255 255 255));
+  --main-color: rgb(12 12 13);
+  --body-bg-color: rgb(212 212 215);
+  --progressBar-color: rgb(10 132 255);
+  --progressBar-bg-color: rgb(221 221 222);
+  --progressBar-blend-color: rgb(116 177 239);
+  --scrollbar-color: auto;
+  --scrollbar-bg-color: auto;
+  --toolbar-icon-bg-color: rgb(0 0 0);
+  --toolbar-icon-hover-bg-color: rgb(0 0 0);
 
-  --sidebar-narrow-bg-color: light-dark(
-    rgb(212 212 215 / 0.9),
-    rgb(42 42 46 / 0.9)
-  );
-  --sidebar-toolbar-bg-color: light-dark(rgb(245 246 247), rgb(50 50 52));
-  --toolbar-bg-color: light-dark(rgb(249 249 250), rgb(56 56 61));
-  --toolbar-border-color: light-dark(rgb(184 184 184), rgb(12 12 13));
+  --sidebar-narrow-bg-color: rgba(212, 212, 215, 0.9);
+  --sidebar-toolbar-bg-color: rgb(245 246 247);
+  --toolbar-bg-color: rgb(249 249 250);
+  --toolbar-border-color: rgb(184 184 184);
   --toolbar-box-shadow: 0 1px 0 var(--toolbar-border-color);
   --toolbar-border-bottom: none;
   --toolbarSidebar-box-shadow:
     inset calc(-1px * var(--dir-factor)) 0 0 rgb(0 0 0 / 0.25),
     0 1px 0 rgb(0 0 0 / 0.15), 0 0 1px rgb(0 0 0 / 0.1);
   --toolbarSidebar-border-bottom: none;
-  --button-hover-color: color-mix(in srgb, currentColor 17%, transparent);
-  --toggled-btn-color: light-dark(rgb(0 0 0), rgb(255 255 255));
+  --button-hover-color: rgba(0, 0, 0, 0.17);
+  --toggled-btn-color: rgb(0 0 0);
   --toggled-btn-bg-color: rgb(0 0 0 / 0.3);
   --toggled-hover-active-btn-color: rgb(0 0 0 / 0.4);
   --toggled-hover-btn-outline: none;
-  --dropdown-btn-bg-color: light-dark(rgb(215 215 219), rgb(74 74 79));
+  --dropdown-btn-bg-color: rgb(215 215 219);
   --dropdown-btn-border: none;
   --separator-color: rgb(0 0 0 / 0.3);
-  --field-color: light-dark(rgb(6 6 6), rgb(250 250 250));
-  --field-bg-color: light-dark(rgb(255 255 255), rgb(64 64 68));
-  --field-border-color: light-dark(rgb(187 187 188), rgb(115 115 115));
-  --treeitem-color: light-dark(rgb(0 0 0 / 0.8), rgb(255 255 255 / 0.8));
-  --treeitem-bg-color: light-dark(rgb(0 0 0 / 0.15), rgb(255 255 255 / 0.15));
-  --treeitem-hover-color: light-dark(rgb(0 0 0 / 0.9), rgb(255 255 255 / 0.9));
-  --treeitem-selected-color: light-dark(
-    rgb(0 0 0 / 0.9),
-    rgb(255 255 255 / 0.9)
-  );
-  --treeitem-selected-bg-color: light-dark(
-    rgb(0 0 0 / 0.25),
-    rgb(255 255 255 / 0.25)
-  );
-  --thumbnail-hover-color: light-dark(rgb(0 0 0 / 0.1), rgb(255 255 255 / 0.1));
-  --thumbnail-selected-color: light-dark(
-    rgb(0 0 0 / 0.2),
-    rgb(255 255 255 / 0.2)
-  );
-  --doorhanger-bg-color: light-dark(rgb(255 255 255), #42414d);
-  --doorhanger-border-color: light-dark(rgb(12 12 13 / 0.2), rgb(39 39 43));
-  --doorhanger-hover-color: light-dark(rgb(12 12 13), rgb(249 249 250));
-  --doorhanger-separator-color: light-dark(rgb(222 222 222), rgb(92 92 97));
+  --field-color: rgb(6 6 6);
+  --field-bg-color: rgb(255 255 255);
+  --field-border-color: rgb(187 187 188);
+  --treeitem-color: rgba(0, 0, 0, 0.8);
+  --treeitem-bg-color: rgba(0, 0, 0, 0.15);
+  --treeitem-hover-color: rgba(0, 0, 0, 0.9);
+  --treeitem-selected-color: rgba(0, 0, 0, 0.9);
+  --treeitem-selected-bg-color: rgba(0, 0, 0, 0.25);
+  --thumbnail-hover-color: rgba(0, 0, 0, 0.1);
+  --thumbnail-selected-color: rgba(0, 0, 0, 0.2);
+  --doorhanger-bg-color: rgb(255 255 255);
+  --doorhanger-border-color: rgba(12, 12, 13, 0.2);
+  --doorhanger-hover-color: rgb(12 12 13);
+  --doorhanger-separator-color: rgb(222 222 222);
   --dialog-button-border: none;
-  --dialog-button-bg-color: light-dark(rgb(12 12 13 / 0.1), rgb(92 92 97));
-  --dialog-button-hover-bg-color: light-dark(
-    rgb(12 12 13 / 0.3),
-    rgb(115 115 115)
-  );
+  --dialog-button-bg-color: rgba(12, 12, 13, 0.1);
+  --dialog-button-hover-bg-color: rgba(12, 12, 13, 0.3);
 
   --loading-icon: url(images/loading.svg);
   --treeitem-expanded-icon: url(images/treeitem-expanded.svg);
@@ -200,12 +185,14 @@
 }
 
 html {
-  &[data-toolbar-density="compact"] {
-    --toolbar-height: 30px;
-  }
-  &[data-toolbar-density="touch"] {
-    --toolbar-height: 44px;
-  }
+}
+
+html[data-toolbar-density="compact"] {
+  --toolbar-height: 30px;
+}
+
+html[data-toolbar-density="touch"] {
+  --toolbar-height: 44px;
 }
 
 html,
@@ -218,15 +205,15 @@ body {
   margin: 0;
   background-color: var(--body-bg-color);
   scrollbar-color: var(--scrollbar-color) var(--scrollbar-bg-color);
+}
 
-  &.wait::before {
-    content: "";
-    position: fixed;
-    width: 100%;
-    height: 100%;
-    z-index: 100000;
-    cursor: wait;
-  }
+body.wait::before {
+  content: "";
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  z-index: 100000;
+  cursor: wait;
 }
 
 .hidden,
@@ -266,15 +253,16 @@ body {
 
 #sidebarContainer {
   position: absolute;
-  inset-block: var(--toolbar-height) 0;
-  inset-inline-start: calc(-1 * var(--sidebar-width));
+  top: var(--toolbar-height);
+  bottom: 0;
+  left: calc(-1 * var(--sidebar-width));
   width: var(--sidebar-width);
   visibility: hidden;
   z-index: 1;
   font: message-box;
   border-top: 1px solid transparent;
   border-inline-end: var(--doorhanger-border-color-whcm);
-  transition-property: inset-inline-start;
+  transition-property: left;
   transition-duration: var(--sidebar-transition-duration);
   transition-timing-function: var(--sidebar-transition-timing-function);
 }
@@ -284,12 +272,15 @@ body {
 }
 
 #outerContainer.sidebarOpen #sidebarContainer {
-  inset-inline-start: 0;
+  left: 0;
 }
 
 #mainContainer {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   min-width: 350px;
   margin: 0;
   display: flex;
@@ -297,8 +288,9 @@ body {
 }
 
 #sidebarContent {
-  inset-block: var(--toolbar-height) 0;
-  inset-inline-start: 0;
+  top: var(--toolbar-height);
+  bottom: 0;
+  left: 0;
   overflow: auto;
   position: absolute;
   width: 100%;
@@ -308,7 +300,10 @@ body {
 #viewerContainer {
   overflow: auto;
   position: absolute;
-  inset: var(--toolbar-height) 0 0;
+  top: var(--toolbar-height);
+  right: 0;
+  bottom: 0;
+  left: 0;
   outline: none;
   z-index: 0;
 }
@@ -319,8 +314,8 @@ body {
 }
 
 #outerContainer.sidebarOpen #viewerContainer:not(.pdfPresentationMode) {
-  inset-inline-start: var(--sidebar-width);
-  transition-property: inset-inline-start;
+  left: var(--sidebar-width);
+  transition-property: left;
 }
 
 #sidebarContainer :is(input, button, select) {
@@ -365,21 +360,22 @@ body {
   #toolbarSidebarRight {
     width: auto;
     height: 100%;
-    padding-inline-end: 2px;
+    padding-right: 2px;
   }
 }
 
 #sidebarResizer {
   position: absolute;
-  inset-block: 0;
-  inset-inline-end: -6px;
+  top: 0;
+  bottom: 0;
+  right: -6px;
   width: 6px;
   z-index: 200;
   cursor: ew-resize;
 }
 
 #outerContainer.sidebarOpen #loadingBar {
-  inset-inline-start: var(--sidebar-width);
+  left: var(--sidebar-width);
 }
 
 #outerContainer.sidebarResizing
@@ -396,55 +392,59 @@ body {
     0 0 0 1px var(--doorhanger-border-color);
   border: var(--doorhanger-border-color-whcm);
   background-color: var(--doorhanger-bg-color);
-  inset-block-start: calc(100% + var(--doorhanger-height) - 2px);
+  top: calc(100% + var(--doorhanger-height) - 2px);
+}
 
-  &::after,
-  &::before {
-    bottom: 100%;
-    border-style: solid;
-    border-color: transparent;
-    content: "";
-    height: 0;
-    width: 0;
-    position: absolute;
-    pointer-events: none;
-    opacity: var(--doorhanger-triangle-opacity-whcm);
-  }
+.doorHanger::after,
+.doorHanger::before,
+.doorHangerRight::after,
+.doorHangerRight::before {
+  bottom: 100%;
+  border-style: solid;
+  border-color: transparent;
+  content: "";
+  height: 0;
+  width: 0;
+  position: absolute;
+  pointer-events: none;
+  opacity: var(--doorhanger-triangle-opacity-whcm);
+}
 
-  &::before {
-    border-width: calc(var(--doorhanger-height) + 2px);
-    border-bottom-color: var(--doorhanger-border-color);
-  }
+.doorHanger::before,
+.doorHangerRight::before {
+  border-width: calc(var(--doorhanger-height) + 2px);
+  border-bottom-color: var(--doorhanger-border-color);
+}
 
-  &::after {
-    border-width: var(--doorhanger-height);
-  }
+.doorHanger::after,
+.doorHangerRight::after {
+  border-width: var(--doorhanger-height);
 }
 
 .doorHangerRight {
-  inset-inline-end: calc(50% - var(--doorhanger-height) - 1px);
+  right: calc(50% - var(--doorhanger-height) - 1px);
+}
 
-  &::before {
-    inset-inline-end: -1px;
-  }
+.doorHangerRight::before {
+  right: -1px;
+}
 
-  &::after {
-    border-bottom-color: var(--doorhanger-bg-color);
-    inset-inline-end: 1px;
-  }
+.doorHangerRight::after {
+  border-bottom-color: var(--doorhanger-bg-color);
+  right: 1px;
 }
 
 .doorHanger {
-  inset-inline-start: calc(50% - var(--doorhanger-height) - 1px);
+  left: calc(50% - var(--doorhanger-height) - 1px);
+}
 
-  &::before {
-    inset-inline-start: -1px;
-  }
+.doorHanger::before {
+  left: -1px;
+}
 
-  &::after {
-    border-bottom-color: var(--toolbar-bg-color);
-    inset-inline-start: 1px;
-  }
+.doorHanger::after {
+  border-bottom-color: var(--toolbar-bg-color);
+  left: 1px;
 }
 
 .dialogButton {
@@ -565,7 +565,7 @@ body {
   position: absolute;
   display: inline-block;
   top: 2px;
-  inset-inline-end: 2px;
+  right: 2px;
   /* Create a filled circle, with a diameter of 9 pixels, using only CSS: */
   content: "";
   background-color: rgb(112 219 85);
@@ -576,7 +576,8 @@ body {
 
 .verticalToolbarSeparator {
   display: block;
-  margin-inline: 2px;
+  margin-left: 2px;
+  margin-right: 2px;
   width: 0;
   height: 80%;
   border-left: 1px solid var(--separator-color);
@@ -595,25 +596,25 @@ body {
 
 .toggleButton {
   display: inline;
+}
 
-  &:has(> input:checked) {
-    color: var(--toggled-btn-color);
-    background-color: var(--toggled-btn-bg-color);
-  }
+.toggleButton:has(> input:checked) {
+  color: var(--toggled-btn-color);
+  background-color: var(--toggled-btn-bg-color);
+}
 
-  &:is(:hover, :has(> input:focus-visible)) {
-    color: var(--toggled-btn-color);
-    background-color: var(--button-hover-color);
-  }
+.toggleButton:is(:hover, :has(> input:focus-visible)) {
+  color: var(--toggled-btn-color);
+  background-color: var(--button-hover-color);
+}
 
-  & > input {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    opacity: 0;
-    width: 0;
-    height: 0;
-  }
+.toggleButton > input {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .toolbarField {
@@ -628,10 +629,10 @@ body {
   font-size: 12px;
   line-height: 16px;
   outline: none;
+}
 
-  &:focus {
-    border-color: #0a84ff;
-  }
+.toolbarField:focus {
+  border-color: #0a84ff;
 }
 
 #pageNumber {
@@ -640,45 +641,45 @@ body {
   width: 40px;
   background-size: 0 0;
   transition-property: none;
+}
 
-  /*#if !MOZCENTRAL*/
-  &::-webkit-inner-spin-button {
-    -webkit-appearance: none;
-  }
-  /*#endif*/
+/*#if !MOZCENTRAL*/
+#pageNumber::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+/*#endif*/
 
-  .loadingInput:has(> &.loading)::after {
-    display: inline;
-    visibility: visible;
+.loadingInput:has(> #pageNumber.loading)::after {
+  display: inline;
+  visibility: visible;
 
-    transition-property: visibility;
-    transition-delay: var(--loading-icon-delay);
-  }
+  transition-property: visibility;
+  transition-delay: var(--loading-icon-delay);
 }
 
 .loadingInput {
   position: relative;
+}
 
-  &::after {
-    position: absolute;
-    visibility: hidden;
-    display: none;
-    width: var(--icon-size);
-    height: var(--icon-size);
+.loadingInput::after {
+  position: absolute;
+  visibility: hidden;
+  display: none;
+  width: var(--icon-size);
+  height: var(--icon-size);
 
-    content: "";
-    background-color: var(--toolbar-icon-bg-color);
-    mask-size: cover;
-    mask-image: var(--loading-icon);
-  }
+  content: "";
+  background-color: var(--toolbar-icon-bg-color);
+  mask-size: cover;
+  mask-image: var(--loading-icon);
+}
 
-  &.start::after {
-    inset-inline-start: 4px;
-  }
+.loadingInput.start::after {
+  left: 4px;
+}
 
-  &.end::after {
-    inset-inline-end: 4px;
-  }
+.loadingInput.end::after {
+  right: 4px;
 }
 
 #thumbnailView,
@@ -687,7 +688,8 @@ body {
 #layersView {
   position: absolute;
   width: calc(100% - 8px);
-  inset-block: 0;
+  top: 0;
+  bottom: 0;
   padding: 4px 4px 0;
   overflow: auto;
   user-select: none;
@@ -753,7 +755,7 @@ a:focus > .thumbnail > .thumbnailImage,
 
 .treeWithDeepNesting > .treeItem,
 .treeItem > .treeItems {
-  margin-inline-start: 20px;
+  margin-left: 20px;
 }
 
 .treeItem > a {
@@ -764,7 +766,7 @@ a:focus > .thumbnail > .thumbnailImage,
   height: auto;
   margin-bottom: 1px;
   padding: 2px 0 5px;
-  padding-inline-start: 4px;
+  padding-left: 4px;
   border-radius: 2px;
   color: var(--treeitem-color);
   font-size: 13px;
@@ -779,7 +781,7 @@ a:focus > .thumbnail > .thumbnailImage,
 }
 
 #layersView .treeItem > a > label {
-  padding-inline-start: 4px;
+  padding-left: 4px;
 }
 
 #layersView .treeItem > a > label > input {
@@ -796,7 +798,7 @@ a:focus > .thumbnail > .thumbnailImage,
 }
 
 .treeItemToggler::before {
-  inset-inline-end: 4px;
+  right: 4px;
   mask-image: var(--treeitem-expanded-icon);
 }
 
@@ -1013,7 +1015,7 @@ dialog :link {
     min-height: var(--menuitem-height);
     justify-content: flex-start;
     gap: 8px;
-    padding-inline-start: 12px;
+    padding-left: 12px;
     aspect-ratio: unset;
     text-align: start;
     white-space: normal;
@@ -1057,7 +1059,8 @@ dialog :link {
   }
 
   .menu {
-    padding-block: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
   }
 
   .menuContainer {
@@ -1092,7 +1095,7 @@ dialog :link {
       font-weight: 400;
       line-height: 150%;
       width: fit-content;
-      inset-inline-start: 0;
+      left: 0;
       color: var(--main-color);
     }
 
@@ -1106,8 +1109,10 @@ dialog :link {
       display: flex;
       flex-direction: column;
       box-sizing: border-box;
-      padding-inline: 10px;
-      padding-block: 10px;
+      padding-left: 10px;
+      padding-right: 10px;
+      padding-top: 10px;
+      padding-bottom: 10px;
 
       > .editorParamsSetter {
         min-height: 26px;
@@ -1269,7 +1274,7 @@ dialog :link {
   }
 
   #findInputContainer {
-    margin-inline-start: 2px;
+    margin-left: 2px;
 
     #findPreviousButton::before {
       mask-image: var(--findbarButton-previous-icon);
@@ -1295,7 +1300,7 @@ dialog :link {
       .loadingInput:has(> &[data-status="pending"])::after {
         display: inline;
         visibility: visible;
-        inset-inline-end: calc(var(--input-horizontal-padding) + 1px);
+        right: calc(var(--input-horizontal-padding) + 1px);
       }
 
       &[data-status="notFound"] {
@@ -1315,7 +1320,8 @@ dialog :link {
     #findResultsCount {
       background-color: rgb(217 217 217);
       color: rgb(82 82 82);
-      padding-block: 4px;
+      padding-top: 4px;
+      padding-bottom: 4px;
 
       &:empty {
         display: none;
@@ -1429,7 +1435,8 @@ dialog :link {
   width: max-content;
   min-width: 16px;
   height: 100%;
-  padding-inline: 4px;
+  padding-left: 4px;
+  padding-right: 4px;
   margin: 2px;
   border-radius: 2px;
   color: var(--main-color);
@@ -1494,8 +1501,10 @@ dialog :link {
     font-size: 12px;
     color: var(--main-color);
     margin: 0;
-    padding-block: 1px 2px;
-    padding-inline: 6px 38px;
+    padding-top: 1px;
+    padding-bottom: 2px;
+    padding-left: 6px;
+    padding-right: 38px;
     border: none;
     outline: none;
     background-color: var(--dropdown-btn-bg-color);
@@ -1523,7 +1532,7 @@ dialog :link {
     background-color: var(--toolbar-icon-bg-color);
     mask-size: cover;
 
-    inset-inline-end: 4px;
+    right: 4px;
     pointer-events: none;
     mask-image: var(--toolbarButton-menuArrow-icon);
   }
@@ -1566,7 +1575,7 @@ dialog :link {
     }
 
     #toolbarViewerLeft #numPages.toolbarLabel {
-      padding-inline-start: 3px;
+      padding-left: 3px;
       flex: none;
     }
   }
@@ -1579,18 +1588,19 @@ dialog :link {
 
     position: absolute;
     top: var(--toolbar-height);
-    inset-inline: 0 var(--progressBar-end-offset);
+    left: 0;
+    right: var(--progressBar-end-offset);
     height: 4px;
     background-color: var(--progressBar-bg-color);
     border-bottom: 1px solid var(--toolbar-border-color);
-    transition-property: inset-inline-start;
+    transition-property: left;
     transition-duration: var(--sidebar-transition-duration);
     transition-timing-function: var(--sidebar-transition-timing-function);
 
     .progress {
       position: absolute;
       top: 0;
-      inset-inline-start: 0;
+      left: 0;
       width: 100%;
       transform: scaleX(var(--progressBar-percent));
       transform-origin: calc(50% - 50% * var(--dir-factor)) 0;
@@ -1608,7 +1618,7 @@ dialog :link {
       .glimmer {
         position: absolute;
         top: 0;
-        inset-inline-start: 0;
+        left: 0;
         height: 100%;
         width: calc(100% + 150px);
         background: repeating-linear-gradient(
@@ -1631,7 +1641,7 @@ dialog :link {
     background-color: var(--sidebar-narrow-bg-color);
   }
   #outerContainer.sidebarOpen #viewerContainer {
-    inset-inline-start: 0 !important;
+    left: 0 !important;
   }
 }
 
