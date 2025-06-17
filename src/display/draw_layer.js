@@ -14,7 +14,7 @@
  */
 
 import { DOMSVGFactory } from "./svg_factory.js";
-import { shadow } from "../shared/util.js";
+import { FeatureTest, shadow } from "../shared/util.js";
 
 /**
  * Manage the SVGs drawn on top of the page canvas.
@@ -63,10 +63,26 @@ class DrawLayer {
     style.height = `${100 * height}%`;
   }
 
-  #createSVG() {
+  #createSVG(forDrawing = false) {
     const svg = DrawLayer._svgFactory.create(1, 1, /* skipDimensions = */ true);
     this.#parent.append(svg);
     svg.setAttribute("aria-hidden", true);
+
+    // Safari fix: Apply different styles for drawings vs highlights
+    if (FeatureTest.platform.isSafari) {
+      if (forDrawing) {
+        // These styles fix drawing visibility but interfere with highlight transparency
+        svg.style.position = "absolute";
+        svg.style.pointerEvents = "none";
+        svg.style.overflow = "visible";
+      } else {
+        // Minimal fix for highlights - just force rendering without layout changes
+        svg.style.willChange = "transform";
+        requestAnimationFrame(() => {
+          svg.style.willChange = "";
+        });
+      }
+    }
 
     return svg;
   }
@@ -97,7 +113,9 @@ class DrawLayer {
 
   draw(properties, isPathUpdatable = false, hasClip = false) {
     const id = DrawLayer.#id++;
-    const root = this.#createSVG();
+    // Pass true for drawings (isPathUpdatable && !hasClip)
+    const isDrawing = isPathUpdatable && !hasClip;
+    const root = this.#createSVG(isDrawing);
 
     const defs = DrawLayer._svgFactory.createElement("defs");
     root.append(defs);
@@ -121,6 +139,16 @@ class DrawLayer {
 
     this.#mapping.set(id, root);
 
+    // Safari fix: Force initial rendering for highlights (hasClip = true)
+    // Highlights use hasClip=true for both static and free highlights
+    if (FeatureTest.platform.isSafari && hasClip) {
+      requestAnimationFrame(() => {
+        root.style.opacity = "0.999";
+        root.offsetHeight;
+        root.style.opacity = "";
+      });
+    }
+
     return { id, clipPathId: `url(#${clipPathId})` };
   }
 
@@ -130,7 +158,8 @@ class DrawLayer {
     // But the outline has a different mix-blend-mode, so we need to draw it in
     // its own SVG.
     const id = DrawLayer.#id++;
-    const root = this.#createSVG();
+    // This is for highlight outlines, not drawings
+    const root = this.#createSVG(false);
     const defs = DrawLayer._svgFactory.createElement("defs");
     root.append(defs);
     const path = DrawLayer._svgFactory.createElement("path");
@@ -195,6 +224,7 @@ class DrawLayer {
     if (!element) {
       return;
     }
+    
     if (root) {
       this.#updateProperties(element, root);
     }
@@ -211,6 +241,19 @@ class DrawLayer {
       const defs = element.firstChild;
       const pathElement = defs.firstChild;
       this.#updateProperties(pathElement, path);
+      
+      // Safari fix: Force SVG to re-render
+      if (FeatureTest.platform.isSafari) {
+        // Only apply fix once per element to avoid positioning issues
+        if (!element.dataset.safariFixed) {
+          element.dataset.safariFixed = "true";
+          // Force a repaint without affecting layout
+          element.style.willChange = "transform";
+          requestAnimationFrame(() => {
+            element.style.willChange = "";
+          });
+        }
+      }
     }
   }
 

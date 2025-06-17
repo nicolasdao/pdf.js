@@ -642,13 +642,16 @@ class HighlightEditor extends AnnotationEditor {
     highlightDiv.setAttribute("aria-hidden", "true");
     highlightDiv.className = "internal";
     
+    // Safari needs a visible background since SVG highlights don't render properly
     if (FeatureTest.platform.isSafari) {
       const hexColor = this.color;
       const r = parseInt(hexColor.slice(1, 3), 16);
       const g = parseInt(hexColor.slice(3, 5), 16);
       const b = parseInt(hexColor.slice(5, 7), 16);
-      highlightDiv.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${this.#opacity * 0.4})`;
+      // Use a transparent highlight (0.3 opacity)
+      highlightDiv.style.backgroundColor = `rgba(${r}, ${g}, ${b}, 0.3)`;
     }
+    
     highlightDiv.style.position = "absolute";
     highlightDiv.style.top = "0";
     highlightDiv.style.left = "0";
