@@ -653,6 +653,7 @@ class FeatureTest {
       isFirefox:
         (typeof PDFJSDev !== "undefined" && PDFJSDev.test("MOZCENTRAL")) ||
         userAgent.includes("Firefox"),
+      isSafari: userAgent.includes("Safari") && !userAgent.includes("Chrome"),
     });
   }
 

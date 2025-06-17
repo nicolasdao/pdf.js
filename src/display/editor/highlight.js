@@ -16,6 +16,7 @@
 import {
   AnnotationEditorParamsType,
   AnnotationEditorType,
+  FeatureTest,
   shadow,
   Util,
 } from "../../shared/util.js";
@@ -518,10 +519,26 @@ class HighlightEditor extends AnnotationEditor {
     this.#outlineId = null;
   }
 
+  #setClipPath(element) {
+    if (FeatureTest.platform.isSafari) {
+      element.style.clipPath = this.#clipPathId;
+      requestAnimationFrame(() => {
+        element.style.transform = "translateZ(0)";
+        element.offsetHeight;
+        if (element.style.clipPath !== this.#clipPathId) {
+          element.style.clipPath = this.#clipPathId;
+        }
+      });
+    } else {
+      element.style.clipPath = this.#clipPathId;
+    }
+  }
+
   #addToDrawLayer(parent = this.parent) {
     if (this.#id !== null) {
       return;
     }
+    
     ({ id: this.#id, clipPathId: this.#clipPathId } = parent.drawLayer.draw(
       {
         bbox: this.#highlightOutlines.box,
@@ -541,6 +558,7 @@ class HighlightEditor extends AnnotationEditor {
       /* isPathUpdatable = */ false,
       /* hasClip = */ true
     ));
+    
     this.#outlineId = parent.drawLayer.drawOutline(
       {
         rootClass: {
@@ -556,7 +574,7 @@ class HighlightEditor extends AnnotationEditor {
     );
 
     if (this.#highlightDiv) {
-      this.#highlightDiv.style.clipPath = this.#clipPathId;
+      this.#setClipPath(this.#highlightDiv);
     }
   }
 
@@ -623,7 +641,22 @@ class HighlightEditor extends AnnotationEditor {
     div.append(highlightDiv);
     highlightDiv.setAttribute("aria-hidden", "true");
     highlightDiv.className = "internal";
-    highlightDiv.style.clipPath = this.#clipPathId;
+    
+    if (FeatureTest.platform.isSafari) {
+      const hexColor = this.color;
+      const r = parseInt(hexColor.slice(1, 3), 16);
+      const g = parseInt(hexColor.slice(3, 5), 16);
+      const b = parseInt(hexColor.slice(5, 7), 16);
+      highlightDiv.style.backgroundColor = `rgba(${r}, ${g}, ${b}, ${this.#opacity * 0.4})`;
+    }
+    highlightDiv.style.position = "absolute";
+    highlightDiv.style.top = "0";
+    highlightDiv.style.left = "0";
+    highlightDiv.style.width = "100%";
+    highlightDiv.style.height = "100%";
+    highlightDiv.style.pointerEvents = "none";
+    
+    this.#setClipPath(highlightDiv);
     const [parentWidth, parentHeight] = this.parentDimensions;
     this.setDims(this.width * parentWidth, this.height * parentHeight);
 
