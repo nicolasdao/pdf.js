@@ -49,6 +49,16 @@
   --new-alt-text-warning-image: url(images/altText_warning.svg);
 }
 
+@media (prefers-color-scheme: dark) {
+  :root {
+    --outline-around-color: #52525e;
+    --hover-outline-around-color: var(--outline-around-color);
+    --outline-color: #0df;
+    --focus-outline-color: #0df;
+    --resizer-bg-color: var(--outline-color);
+  }
+}
+
 /* The following class is used to hide an element but keep it available to
  * for screen readers. */
 .visuallyHidden {
@@ -65,29 +75,25 @@
   font-size: 0;
 }
 
-.textLayer {
-  &.highlighting {
-    cursor: var(--editorFreeHighlight-editing-cursor);
-
-    &:not(.free) span {
-      cursor: var(--editorHighlight-editing-cursor);
-
-      &[role="img"] {
-        cursor: var(--editorFreeHighlight-editing-cursor);
-      }
-    }
-
-    &.free span {
-      cursor: var(--editorFreeHighlight-editing-cursor);
-    }
-  }
+.textLayer.highlighting {
+  cursor: var(--editorFreeHighlight-editing-cursor);
 }
 
-#viewerContainer.pdfPresentationMode:fullscreen,
-.annotationEditorLayer.disabled {
-  .noAltTextBadge {
-    display: none !important;
-  }
+.textLayer.highlighting:not(.free) span {
+  cursor: var(--editorHighlight-editing-cursor);
+}
+
+.textLayer.highlighting:not(.free) span[role="img"] {
+  cursor: var(--editorFreeHighlight-editing-cursor);
+}
+
+.textLayer.highlighting.free span {
+  cursor: var(--editorFreeHighlight-editing-cursor);
+}
+
+#viewerContainer.pdfPresentationMode:fullscreen .noAltTextBadge,
+.annotationEditorLayer.disabled .noAltTextBadge {
+  display: none !important;
 }
 
 @media (min-resolution: 1.1dppx) {
@@ -122,36 +128,44 @@
 .annotationEditorLayer {
   background: transparent;
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   font-size: calc(100px * var(--total-scale-factor));
   transform-origin: 0 0;
   cursor: auto;
+}
 
-  .selectedEditor {
-    z-index: 100000 !important;
-  }
+.annotationEditorLayer .selectedEditor {
+  z-index: 100000 !important;
+}
 
-  &.drawing * {
-    pointer-events: none !important;
-  }
+.annotationEditorLayer.drawing * {
+  pointer-events: none !important;
 }
 
 .annotationEditorLayer.waiting {
   content: "";
   cursor: wait;
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   width: 100%;
   height: 100%;
 }
 
 .annotationEditorLayer.disabled {
   pointer-events: none;
+}
 
-  &.highlightEditing
-    :is(.freeTextEditor, .inkEditor, .stampEditor, .signatureEditor) {
-    pointer-events: auto;
-  }
+.annotationEditorLayer.disabled.highlightEditing .freeTextEditor,
+.annotationEditorLayer.disabled.highlightEditing .inkEditor,
+.annotationEditorLayer.disabled.highlightEditing .stampEditor,
+.annotationEditorLayer.disabled.highlightEditing .signatureEditor {
+  pointer-events: auto;
 }
 
 .annotationEditorLayer.freetextEditing {
@@ -166,8 +180,10 @@
   box-sizing: border-box;
 }
 
-.annotationEditorLayer
-  :is(.freeTextEditor, .inkEditor, .stampEditor, .signatureEditor) {
+.annotationEditorLayer .freeTextEditor,
+.annotationEditorLayer .inkEditor,
+.annotationEditorLayer .stampEditor,
+.annotationEditorLayer .signatureEditor {
   position: absolute;
   background: transparent;
   z-index: 1;
@@ -176,329 +192,377 @@
   max-width: 100%;
   max-height: 100%;
   border: var(--unfocus-outline);
+}
 
-  &.draggable.selectedEditor {
-    cursor: move;
-  }
+.annotationEditorLayer .freeTextEditor.draggable.selectedEditor,
+.annotationEditorLayer .inkEditor.draggable.selectedEditor,
+.annotationEditorLayer .stampEditor.draggable.selectedEditor,
+.annotationEditorLayer .signatureEditor.draggable.selectedEditor {
+  cursor: move;
+}
 
-  &.selectedEditor {
-    border: var(--focus-outline);
-    outline: var(--focus-outline-around);
+.annotationEditorLayer .freeTextEditor.selectedEditor,
+.annotationEditorLayer .inkEditor.selectedEditor,
+.annotationEditorLayer .stampEditor.selectedEditor,
+.annotationEditorLayer .signatureEditor.selectedEditor {
+  border: var(--focus-outline);
+  outline: var(--focus-outline-around);
+}
 
-    &::before {
-      /*
-        This is a workaround for the lack of support for stripes(...) (see
-        https://drafts.csswg.org/css-images-4/#stripes).
-        The outline should be composed of 1px white, 2px blue and 1px white.
-        This could be achieved in different ways:
-          - using a linear-gradient;
-          - using a box-shadow;
-          - using an outline on the selected element and an outline+border on
-            the ::before pseudo-element.
-        All these options lead to incorrect rendering likely due to rounding
-        issues.
-        That said it doesn't mean that the current is ideal, but it's the best
-        we could come up with for the moment.
-        One drawback of this approach is that we use a border on the selected
-        element which means that we must take care of it when positioning the
-        div in js (see AnnotationEditor._borderLineWidth in editor.js).
-      */
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: var(--focus-outline-around);
-      pointer-events: none;
-    }
-  }
+.annotationEditorLayer .freeTextEditor.selectedEditor::before,
+.annotationEditorLayer .inkEditor.selectedEditor::before,
+.annotationEditorLayer .stampEditor.selectedEditor::before,
+.annotationEditorLayer .signatureEditor.selectedEditor::before {
+  /*
+    This is a workaround for the lack of support for stripes(...) (see
+    https://drafts.csswg.org/css-images-4/#stripes).
+    The outline should be composed of 1px white, 2px blue and 1px white.
+    This could be achieved in different ways:
+      - using a linear-gradient;
+      - using a box-shadow;
+      - using an outline on the selected element and an outline+border on
+        the ::before pseudo-element.
+    All these options lead to incorrect rendering likely due to rounding
+    issues.
+    That said it doesn't mean that the current is ideal, but it's the best
+    we could come up with for the moment.
+    One drawback of this approach is that we use a border on the selected
+    element which means that we must take care of it when positioning the
+    div in js (see AnnotationEditor._borderLineWidth in editor.js).
+  */
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: var(--focus-outline-around);
+  pointer-events: none;
+}
 
-  &:hover:not(.selectedEditor) {
-    border: var(--hover-outline);
-    outline: var(--hover-outline-around);
+.annotationEditorLayer .freeTextEditor:hover:not(.selectedEditor),
+.annotationEditorLayer .inkEditor:hover:not(.selectedEditor),
+.annotationEditorLayer .stampEditor:hover:not(.selectedEditor),
+.annotationEditorLayer .signatureEditor:hover:not(.selectedEditor) {
+  border: var(--hover-outline);
+  outline: var(--hover-outline-around);
+}
 
-    &::before {
-      content: "";
-      position: absolute;
-      inset: 0;
-      border: var(--focus-outline-around);
-    }
+.annotationEditorLayer .freeTextEditor:hover:not(.selectedEditor)::before,
+.annotationEditorLayer .inkEditor:hover:not(.selectedEditor)::before,
+.annotationEditorLayer .stampEditor:hover:not(.selectedEditor)::before,
+.annotationEditorLayer .signatureEditor:hover:not(.selectedEditor)::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  border: var(--focus-outline-around);
+}
+
+.annotationEditorLayer .freeTextEditor .editToolbar,
+.annotationEditorLayer .inkEditor .editToolbar,
+.annotationEditorLayer .stampEditor .editToolbar,
+.annotationEditorLayer .highlightEditor .editToolbar,
+.annotationEditorLayer .signatureEditor .editToolbar,
+.textLayer .editToolbar {
+  --editor-toolbar-delete-image: url(images/editor-toolbar-delete.svg);
+  --editor-toolbar-bg-color: #f0f0f4;
+  --editor-toolbar-highlight-image: url(images/toolbarButton-editorHighlight.svg);
+  --editor-toolbar-fg-color: #2e2e56;
+  --editor-toolbar-border-color: #8f8f9d;
+  --editor-toolbar-hover-border-color: var(--editor-toolbar-border-color);
+  --editor-toolbar-hover-bg-color: #e0e0e6;
+  --editor-toolbar-hover-fg-color: var(--editor-toolbar-fg-color);
+  --editor-toolbar-hover-outline: none;
+  --editor-toolbar-focus-outline-color: #0060df;
+  --editor-toolbar-shadow: 0 2px 6px 0 rgb(58 57 68 / 0.2);
+  --editor-toolbar-vert-offset: 6px;
+  --editor-toolbar-height: 28px;
+  --editor-toolbar-padding: 2px;
+  --alt-text-done-color: #2ac3a2;
+  --alt-text-warning-color: #0090ed;
+  --alt-text-hover-done-color: var(--alt-text-done-color);
+  --alt-text-hover-warning-color: var(--alt-text-warning-color);
+
+  display: flex;
+  width: fit-content;
+  height: var(--editor-toolbar-height);
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  cursor: default;
+  pointer-events: auto;
+  box-sizing: content-box;
+  padding: var(--editor-toolbar-padding);
+
+  position: absolute;
+  right: 0;
+  top: calc(100% + var(--editor-toolbar-vert-offset));
+
+  border-radius: 6px;
+  background-color: var(--editor-toolbar-bg-color);
+  border: 1px solid var(--editor-toolbar-border-color);
+  box-shadow: var(--editor-toolbar-shadow);
+}
+
+@media (prefers-color-scheme: dark) {
+  .annotationEditorLayer .freeTextEditor .editToolbar,
+  .annotationEditorLayer .inkEditor .editToolbar,
+  .annotationEditorLayer .stampEditor .editToolbar,
+  .annotationEditorLayer .highlightEditor .editToolbar,
+  .annotationEditorLayer .signatureEditor .editToolbar,
+  .textLayer .editToolbar {
+    --editor-toolbar-bg-color: #2b2a33;
+    --editor-toolbar-fg-color: #fbfbfe;
+    --editor-toolbar-hover-bg-color: #52525e;
+    --editor-toolbar-focus-outline-color: #0df;
+    --alt-text-done-color: #54ffbd;
+    --alt-text-warning-color: #80ebff;
   }
 }
 
-.annotationEditorLayer
-  :is(
-    .freeTextEditor,
-    .inkEditor,
-    .stampEditor,
-    .highlightEditor,
-    .signatureEditor
-  ),
-.textLayer {
-  .editToolbar {
-    --editor-toolbar-delete-image: url(images/editor-toolbar-delete.svg);
-    --editor-toolbar-bg-color: light-dark(#f0f0f4, #2b2a33);
-    --editor-toolbar-highlight-image: url(images/toolbarButton-editorHighlight.svg);
-    --editor-toolbar-fg-color: light-dark(#2e2e56, #fbfbfe);
-    --editor-toolbar-border-color: #8f8f9d;
-    --editor-toolbar-hover-border-color: var(--editor-toolbar-border-color);
-    --editor-toolbar-hover-bg-color: light-dark(#e0e0e6, #52525e);
-    --editor-toolbar-hover-fg-color: var(--editor-toolbar-fg-color);
-    --editor-toolbar-hover-outline: none;
-    --editor-toolbar-focus-outline-color: light-dark(#0060df, #0df);
-    --editor-toolbar-shadow: 0 2px 6px 0 rgb(58 57 68 / 0.2);
-    --editor-toolbar-vert-offset: 6px;
-    --editor-toolbar-height: 28px;
-    --editor-toolbar-padding: 2px;
-    --alt-text-done-color: light-dark(#2ac3a2, #54ffbd);
-    --alt-text-warning-color: light-dark(#0090ed, #80ebff);
-    --alt-text-hover-done-color: var(--alt-text-done-color);
-    --alt-text-hover-warning-color: var(--alt-text-warning-color);
+@media screen and (forced-colors: active) {
+  .annotationEditorLayer .freeTextEditor .editToolbar,
+  .annotationEditorLayer .inkEditor .editToolbar,
+  .annotationEditorLayer .stampEditor .editToolbar,
+  .annotationEditorLayer .highlightEditor .editToolbar,
+  .annotationEditorLayer .signatureEditor .editToolbar,
+  .textLayer .editToolbar {
+    --editor-toolbar-bg-color: ButtonFace;
+    --editor-toolbar-fg-color: ButtonText;
+    --editor-toolbar-border-color: ButtonText;
+    --editor-toolbar-hover-border-color: AccentColor;
+    --editor-toolbar-hover-bg-color: ButtonFace;
+    --editor-toolbar-hover-fg-color: AccentColor;
+    --editor-toolbar-hover-outline: 2px solid
+      var(--editor-toolbar-hover-border-color);
+    --editor-toolbar-focus-outline-color: ButtonBorder;
+    --editor-toolbar-shadow: none;
+    --alt-text-done-color: var(--editor-toolbar-fg-color);
+    --alt-text-warning-color: var(--editor-toolbar-fg-color);
+    --alt-text-hover-done-color: var(--editor-toolbar-hover-fg-color);
+    --alt-text-hover-warning-color: var(--editor-toolbar-hover-fg-color);
+  }
+}
 
-    @media screen and (forced-colors: active) {
-      --editor-toolbar-bg-color: ButtonFace;
-      --editor-toolbar-fg-color: ButtonText;
-      --editor-toolbar-border-color: ButtonText;
-      --editor-toolbar-hover-border-color: AccentColor;
-      --editor-toolbar-hover-bg-color: ButtonFace;
-      --editor-toolbar-hover-fg-color: AccentColor;
-      --editor-toolbar-hover-outline: 2px solid
-        var(--editor-toolbar-hover-border-color);
-      --editor-toolbar-focus-outline-color: ButtonBorder;
-      --editor-toolbar-shadow: none;
-      --alt-text-done-color: var(--editor-toolbar-fg-color);
-      --alt-text-warning-color: var(--editor-toolbar-fg-color);
-      --alt-text-hover-done-color: var(--editor-toolbar-hover-fg-color);
-      --alt-text-hover-warning-color: var(--editor-toolbar-hover-fg-color);
-    }
+.editToolbar.hidden {
+  display: none;
+}
 
-    display: flex;
-    width: fit-content;
-    height: var(--editor-toolbar-height);
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    cursor: default;
-    pointer-events: auto;
-    box-sizing: content-box;
-    padding: var(--editor-toolbar-padding);
+.editToolbar:has(:focus-visible) {
+  border-color: transparent;
+}
 
-    position: absolute;
-    inset-inline-end: 0;
-    inset-block-start: calc(100% + var(--editor-toolbar-vert-offset));
+.editToolbar:dir(ltr) {
+  transform-origin: 100% 0;
+}
 
-    border-radius: 6px;
-    background-color: var(--editor-toolbar-bg-color);
-    border: 1px solid var(--editor-toolbar-border-color);
-    box-shadow: var(--editor-toolbar-shadow);
+.editToolbar:dir(rtl) {
+  transform-origin: 0 0;
+}
 
-    &.hidden {
-      display: none;
-    }
+.editToolbar .buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0;
+  height: 100%;
+}
 
-    &:has(:focus-visible) {
-      border-color: transparent;
-    }
+.editToolbar .buttons button {
+  padding: 0;
+}
 
-    &:dir(ltr) {
-      transform-origin: 100% 0;
-    }
+.editToolbar .buttons .divider {
+  width: 0;
+  height: calc(
+    2 * var(--editor-toolbar-padding) + var(--editor-toolbar-height)
+  );
+  border-left: 1px solid var(--editor-toolbar-border-color);
+  border-right: none;
+  display: inline-block;
+  margin-left: 2px;
+  margin-right: 2px;
+}
 
-    &:dir(rtl) {
-      transform-origin: 0 0;
-    }
+.editToolbar .buttons .highlightButton {
+  width: var(--editor-toolbar-height);
+}
 
-    .buttons {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 0;
-      height: 100%;
+.editToolbar .buttons .highlightButton::before {
+  content: "";
+  mask-image: var(--editor-toolbar-highlight-image);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  display: inline-block;
+  background-color: var(--editor-toolbar-fg-color);
+  width: 100%;
+  height: 100%;
+}
 
-      button {
-        padding: 0;
-      }
+.editToolbar .buttons .highlightButton:hover::before {
+  background-color: var(--editor-toolbar-hover-fg-color);
+}
 
-      .divider {
-        width: 0;
-        height: calc(
-          2 * var(--editor-toolbar-padding) + var(--editor-toolbar-height)
-        );
-        border-left: 1px solid var(--editor-toolbar-border-color);
-        border-right: none;
-        display: inline-block;
-        margin-inline: 2px;
-      }
+.editToolbar .buttons .delete {
+  width: var(--editor-toolbar-height);
+}
 
-      .highlightButton {
-        width: var(--editor-toolbar-height);
+.editToolbar .buttons .delete::before {
+  content: "";
+  mask-image: var(--editor-toolbar-delete-image);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  display: inline-block;
+  background-color: var(--editor-toolbar-fg-color);
+  width: 100%;
+  height: 100%;
+}
 
-        &::before {
-          content: "";
-          mask-image: var(--editor-toolbar-highlight-image);
-          mask-repeat: no-repeat;
-          mask-position: center;
-          display: inline-block;
-          background-color: var(--editor-toolbar-fg-color);
-          width: 100%;
-          height: 100%;
-        }
+.editToolbar .buttons .delete:hover::before {
+  background-color: var(--editor-toolbar-hover-fg-color);
+}
 
-        &:hover::before {
-          background-color: var(--editor-toolbar-hover-fg-color);
-        }
-      }
+.editToolbar .buttons > * {
+  height: var(--editor-toolbar-height);
+}
 
-      .delete {
-        width: var(--editor-toolbar-height);
+.editToolbar .buttons > :not(.divider) {
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
 
-        &::before {
-          content: "";
-          mask-image: var(--editor-toolbar-delete-image);
-          mask-repeat: no-repeat;
-          mask-position: center;
-          display: inline-block;
-          background-color: var(--editor-toolbar-fg-color);
-          width: 100%;
-          height: 100%;
-        }
+.editToolbar .buttons > :not(.divider):hover {
+  border-radius: 2px;
+  background-color: var(--editor-toolbar-hover-bg-color);
+  color: var(--editor-toolbar-hover-fg-color);
+  outline: var(--editor-toolbar-hover-outline);
+  outline-offset: 1px;
+}
 
-        &:hover::before {
-          background-color: var(--editor-toolbar-hover-fg-color);
-        }
-      }
+.editToolbar .buttons > :not(.divider):hover:active {
+  outline: none;
+}
 
-      > * {
-        height: var(--editor-toolbar-height);
-      }
+.editToolbar .buttons > :not(.divider):focus-visible {
+  border-radius: 2px;
+  outline: 2px solid var(--editor-toolbar-focus-outline-color);
+}
 
-      > :not(.divider) {
-        border: none;
-        background-color: transparent;
-        cursor: pointer;
+.editToolbar .buttons .altText {
+  --alt-text-add-image: url(images/altText_add.svg);
+  --alt-text-done-image: url(images/altText_done.svg);
 
-        &:hover {
-          border-radius: 2px;
-          background-color: var(--editor-toolbar-hover-bg-color);
-          color: var(--editor-toolbar-hover-fg-color);
-          outline: var(--editor-toolbar-hover-outline);
-          outline-offset: 1px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  padding-left: 8px;
+  padding-right: 8px;
+  pointer-events: all;
+  font: menu;
+  font-weight: 590;
+  font-size: 12px;
+  color: var(--editor-toolbar-fg-color);
+}
 
-          &:active {
-            outline: none;
-          }
-        }
+.editToolbar .buttons .altText:disabled {
+  pointer-events: none;
+}
 
-        &:focus-visible {
-          border-radius: 2px;
-          outline: 2px solid var(--editor-toolbar-focus-outline-color);
-        }
-      }
+.editToolbar .buttons .altText::before {
+  content: "";
+  mask-image: var(--alt-text-add-image);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  display: inline-block;
+  width: 12px;
+  height: 13px;
+  background-color: var(--editor-toolbar-fg-color);
+  margin-right: 4px;
+}
 
-      .altText {
-        --alt-text-add-image: url(images/altText_add.svg);
-        --alt-text-done-image: url(images/altText_done.svg);
+.editToolbar .buttons .altText:hover::before {
+  background-color: var(--editor-toolbar-hover-fg-color);
+}
 
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        width: max-content;
-        padding-inline: 8px;
-        pointer-events: all;
-        font: menu;
-        font-weight: 590;
-        font-size: 12px;
-        color: var(--editor-toolbar-fg-color);
+.editToolbar .buttons .altText.done::before {
+  mask-image: var(--alt-text-done-image);
+}
 
-        &:disabled {
-          pointer-events: none;
-        }
+.editToolbar .buttons .altText.new::before {
+  width: 16px;
+  height: 16px;
+  mask-image: var(--new-alt-text-warning-image);
+  background-color: var(--alt-text-warning-color);
+  mask-size: cover;
+}
 
-        &::before {
-          content: "";
-          mask-image: var(--alt-text-add-image);
-          mask-repeat: no-repeat;
-          mask-position: center;
-          display: inline-block;
-          width: 12px;
-          height: 13px;
-          background-color: var(--editor-toolbar-fg-color);
-          margin-inline-end: 4px;
-        }
+.editToolbar .buttons .altText.new:hover::before {
+  background-color: var(--alt-text-hover-warning-color);
+}
 
-        &:hover::before {
-          background-color: var(--editor-toolbar-hover-fg-color);
-        }
+.editToolbar .buttons .altText.new.done::before {
+  mask-image: var(--alt-text-done-image);
+  background-color: var(--alt-text-done-color);
+}
 
-        &.done::before {
-          mask-image: var(--alt-text-done-image);
-        }
+.editToolbar .buttons .altText.new.done:hover::before {
+  background-color: var(--alt-text-hover-done-color);
+}
 
-        &.new {
-          &::before {
-            width: 16px;
-            height: 16px;
-            mask-image: var(--new-alt-text-warning-image);
-            background-color: var(--alt-text-warning-color);
-            mask-size: cover;
-          }
+.editToolbar .buttons .altText .tooltip {
+  display: none;
+  word-wrap: anywhere;
+}
 
-          &:hover::before {
-            background-color: var(--alt-text-hover-warning-color);
-          }
+.editToolbar .buttons .altText .tooltip.show {
+  --alt-text-tooltip-bg: #f0f0f4;
+  --alt-text-tooltip-fg: #15141a;
+  --alt-text-tooltip-border: #8f8f9d;
+  --alt-text-tooltip-shadow: 0px 2px 6px 0px rgba(58, 57, 68, 0.2);
 
-          &.done {
-            &::before {
-              mask-image: var(--alt-text-done-image);
-              background-color: var(--alt-text-done-color);
-            }
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 0;
+  padding-top: 2px;
+  padding-bottom: 3px;
+  padding-left: 3px;
+  padding-right: 3px;
+  max-width: 300px;
+  width: max-content;
+  height: auto;
+  font-size: 12px;
 
-            &:hover::before {
-              background-color: var(--alt-text-hover-done-color);
-            }
-          }
-        }
+  border: 0.5px solid var(--alt-text-tooltip-border);
+  background: var(--alt-text-tooltip-bg);
+  box-shadow: var(--alt-text-tooltip-shadow);
+  color: var(--alt-text-tooltip-fg);
 
-        .tooltip {
-          display: none;
-          word-wrap: anywhere;
+  pointer-events: none;
+}
 
-          &.show {
-            --alt-text-tooltip-bg: light-dark(#f0f0f4, #1c1b22);
-            --alt-text-tooltip-fg: light-dark(#15141a, #fbfbfe);
-            --alt-text-tooltip-border: #8f8f9d;
-            --alt-text-tooltip-shadow: 0px 2px 6px 0px
-              light-dark(rgb(58 57 68 / 0.2), #15141a);
+@media (prefers-color-scheme: dark) {
+  .editToolbar .buttons .altText .tooltip.show {
+    --alt-text-tooltip-bg: #1c1b22;
+    --alt-text-tooltip-fg: #fbfbfe;
+    --alt-text-tooltip-shadow: 0px 2px 6px 0px #15141a;
+  }
+}
 
-            @media screen and (forced-colors: active) {
-              --alt-text-tooltip-bg: Canvas;
-              --alt-text-tooltip-fg: CanvasText;
-              --alt-text-tooltip-border: CanvasText;
-              --alt-text-tooltip-shadow: none;
-            }
-
-            display: inline-flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: absolute;
-            top: calc(100% + 2px);
-            inset-inline-start: 0;
-            padding-block: 2px 3px;
-            padding-inline: 3px;
-            max-width: 300px;
-            width: max-content;
-            height: auto;
-            font-size: 12px;
-
-            border: 0.5px solid var(--alt-text-tooltip-border);
-            background: var(--alt-text-tooltip-bg);
-            box-shadow: var(--alt-text-tooltip-shadow);
-            color: var(--alt-text-tooltip-fg);
-
-            pointer-events: none;
-          }
-        }
-      }
-    }
+@media screen and (forced-colors: active) {
+  .editToolbar .buttons .altText .tooltip.show {
+    --alt-text-tooltip-bg: Canvas;
+    --alt-text-tooltip-fg: CanvasText;
+    --alt-text-tooltip-border: CanvasText;
+    --alt-text-tooltip-shadow: none;
   }
 }
 
@@ -512,7 +576,10 @@
 .annotationEditorLayer .freeTextEditor .internal {
   background: transparent;
   border: none;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   overflow: visible;
   white-space: nowrap;
   font: 10px sans-serif;
@@ -524,7 +591,10 @@
   position: absolute;
   display: none;
   background: transparent;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   width: 100%;
   height: 100%;
 }
@@ -554,7 +624,10 @@
 
 .annotationEditorLayer .inkEditor .inkEditorCanvas {
   position: absolute;
-  inset: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   width: 100%;
   height: 100%;
   touch-action: none;
@@ -563,652 +636,778 @@
 .annotationEditorLayer .stampEditor {
   width: auto;
   height: auto;
+}
 
-  canvas {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    top: 0;
-    left: 0;
-  }
+.annotationEditorLayer .stampEditor canvas {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  top: 0;
+  left: 0;
+}
 
-  .noAltTextBadge {
-    --no-alt-text-badge-border-color: light-dark(#f0f0f4, #52525e);
-    --no-alt-text-badge-bg-color: light-dark(#cfcfd8, #fbfbfe);
-    --no-alt-text-badge-fg-color: light-dark(#5b5b66, #15141a);
+.annotationEditorLayer .stampEditor .noAltTextBadge {
+  --no-alt-text-badge-border-color: #f0f0f4;
+  --no-alt-text-badge-bg-color: #cfcfd8;
+  --no-alt-text-badge-fg-color: #5b5b66;
 
-    @media screen and (forced-colors: active) {
-      --no-alt-text-badge-border-color: ButtonText;
-      --no-alt-text-badge-bg-color: ButtonFace;
-      --no-alt-text-badge-fg-color: ButtonText;
-    }
+  position: absolute;
+  right: 5px;
+  bottom: 5px;
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+  padding: 3px;
+  justify-content: center;
+  align-items: center;
+  pointer-events: none;
+  z-index: 1;
 
-    position: absolute;
-    inset-inline-end: 5px;
-    inset-block-end: 5px;
-    display: inline-flex;
-    width: 32px;
-    height: 32px;
-    padding: 3px;
-    justify-content: center;
-    align-items: center;
-    pointer-events: none;
-    z-index: 1;
+  border-radius: 2px;
+  border: 1px solid var(--no-alt-text-badge-border-color);
+  background: var(--no-alt-text-badge-bg-color);
+}
 
-    border-radius: 2px;
-    border: 1px solid var(--no-alt-text-badge-border-color);
-    background: var(--no-alt-text-badge-bg-color);
-
-    &::before {
-      content: "";
-      display: inline-block;
-      width: 16px;
-      height: 16px;
-      mask-image: var(--new-alt-text-warning-image);
-      mask-size: cover;
-      background-color: var(--no-alt-text-badge-fg-color);
-    }
+@media (prefers-color-scheme: dark) {
+  .annotationEditorLayer .stampEditor .noAltTextBadge {
+    --no-alt-text-badge-border-color: #52525e;
+    --no-alt-text-badge-bg-color: #fbfbfe;
+    --no-alt-text-badge-fg-color: #15141a;
   }
 }
 
-.annotationEditorLayer {
-  :is(.freeTextEditor, .inkEditor, .stampEditor, .signatureEditor) {
-    & > .resizers {
-      position: absolute;
-      inset: 0;
-
-      &.hidden {
-        display: none;
-      }
-
-      & > .resizer {
-        width: var(--resizer-size);
-        height: var(--resizer-size);
-        background: content-box var(--resizer-bg-color);
-        border: var(--focus-outline-around);
-        border-radius: 2px;
-        position: absolute;
-
-        &.topLeft {
-          top: var(--resizer-shift);
-          left: var(--resizer-shift);
-        }
-
-        &.topMiddle {
-          top: var(--resizer-shift);
-          left: calc(50% + var(--resizer-shift));
-        }
-
-        &.topRight {
-          top: var(--resizer-shift);
-          right: var(--resizer-shift);
-        }
-
-        &.middleRight {
-          top: calc(50% + var(--resizer-shift));
-          right: var(--resizer-shift);
-        }
-
-        &.bottomRight {
-          bottom: var(--resizer-shift);
-          right: var(--resizer-shift);
-        }
-
-        &.bottomMiddle {
-          bottom: var(--resizer-shift);
-          left: calc(50% + var(--resizer-shift));
-        }
-
-        &.bottomLeft {
-          bottom: var(--resizer-shift);
-          left: var(--resizer-shift);
-        }
-
-        &.middleLeft {
-          top: calc(50% + var(--resizer-shift));
-          left: var(--resizer-shift);
-        }
-      }
-    }
-  }
-
-  &[data-main-rotation="0"]
-    :is([data-editor-rotation="0"], [data-editor-rotation="180"]),
-  &[data-main-rotation="90"]
-    :is([data-editor-rotation="270"], [data-editor-rotation="90"]),
-  &[data-main-rotation="180"]
-    :is([data-editor-rotation="180"], [data-editor-rotation="0"]),
-  &[data-main-rotation="270"]
-    :is([data-editor-rotation="90"], [data-editor-rotation="270"]) {
-    & > .resizers > .resizer {
-      &.topLeft,
-      &.bottomRight {
-        cursor: nwse-resize;
-      }
-
-      &.topMiddle,
-      &.bottomMiddle {
-        cursor: ns-resize;
-      }
-
-      &.topRight,
-      &.bottomLeft {
-        cursor: nesw-resize;
-      }
-
-      &.middleRight,
-      &.middleLeft {
-        cursor: ew-resize;
-      }
-    }
-  }
-
-  &[data-main-rotation="0"]
-    :is([data-editor-rotation="90"], [data-editor-rotation="270"]),
-  &[data-main-rotation="90"]
-    :is([data-editor-rotation="0"], [data-editor-rotation="180"]),
-  &[data-main-rotation="180"]
-    :is([data-editor-rotation="270"], [data-editor-rotation="90"]),
-  &[data-main-rotation="270"]
-    :is([data-editor-rotation="180"], [data-editor-rotation="0"]) {
-    & > .resizers > .resizer {
-      &.topLeft,
-      &.bottomRight {
-        cursor: nesw-resize;
-      }
-
-      &.topMiddle,
-      &.bottomMiddle {
-        cursor: ew-resize;
-      }
-
-      &.topRight,
-      &.bottomLeft {
-        cursor: nwse-resize;
-      }
-
-      &.middleRight,
-      &.middleLeft {
-        cursor: ns-resize;
-      }
-    }
-  }
-
-  &
-    :is(
-      [data-main-rotation="0"] [data-editor-rotation="90"],
-      [data-main-rotation="90"] [data-editor-rotation="0"],
-      [data-main-rotation="180"] [data-editor-rotation="270"],
-      [data-main-rotation="270"] [data-editor-rotation="180"]
-    ) {
-    .editToolbar {
-      rotate: 270deg;
-
-      &:dir(ltr) {
-        inset-inline-end: calc(0px - var(--editor-toolbar-vert-offset));
-        inset-block-start: 0;
-      }
-
-      &:dir(rtl) {
-        inset-inline-end: calc(100% + var(--editor-toolbar-vert-offset));
-        inset-block-start: 0;
-      }
-    }
-  }
-
-  &
-    :is(
-      [data-main-rotation="0"] [data-editor-rotation="180"],
-      [data-main-rotation="90"] [data-editor-rotation="90"],
-      [data-main-rotation="180"] [data-editor-rotation="0"],
-      [data-main-rotation="270"] [data-editor-rotation="270"]
-    ) {
-    .editToolbar {
-      rotate: 180deg;
-      inset-inline-end: 100%;
-      inset-block-start: calc(0pc - var(--editor-toolbar-vert-offset));
-    }
-  }
-
-  &
-    :is(
-      [data-main-rotation="0"] [data-editor-rotation="270"],
-      [data-main-rotation="90"] [data-editor-rotation="180"],
-      [data-main-rotation="180"] [data-editor-rotation="90"],
-      [data-main-rotation="270"] [data-editor-rotation="0"]
-    ) {
-    .editToolbar {
-      rotate: 90deg;
-
-      &:dir(ltr) {
-        inset-inline-end: calc(100% + var(--editor-toolbar-vert-offset));
-        inset-block-start: 100%;
-      }
-
-      &:dir(rtl) {
-        inset-inline-start: calc(0px - var(--editor-toolbar-vert-offset));
-        inset-block-start: 0;
-      }
-    }
+@media screen and (forced-colors: active) {
+  .annotationEditorLayer .stampEditor .noAltTextBadge {
+    --no-alt-text-badge-border-color: ButtonText;
+    --no-alt-text-badge-bg-color: ButtonFace;
+    --no-alt-text-badge-fg-color: ButtonText;
   }
 }
 
-.dialog.altText {
-  &::backdrop {
-    /* This is needed to avoid to darken the image the user want to describe. */
-    mask: url(#alttext-manager-mask);
-  }
+.annotationEditorLayer .stampEditor .noAltTextBadge::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  mask-image: var(--new-alt-text-warning-image);
+  mask-size: cover;
+  background-color: var(--no-alt-text-badge-fg-color);
+}
 
-  /* See alt_text_manager.js */
-  &.positioned {
-    margin: 0;
-  }
+.annotationEditorLayer .freeTextEditor > .resizers,
+.annotationEditorLayer .inkEditor > .resizers,
+.annotationEditorLayer .stampEditor > .resizers,
+.annotationEditorLayer .signatureEditor > .resizers {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+}
 
-  & #altTextContainer {
-    width: 300px;
-    height: fit-content;
-    display: inline-flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 16px;
+.annotationEditorLayer .freeTextEditor > .resizers.hidden,
+.annotationEditorLayer .inkEditor > .resizers.hidden,
+.annotationEditorLayer .stampEditor > .resizers.hidden,
+.annotationEditorLayer .signatureEditor > .resizers.hidden {
+  display: none;
+}
 
-    & #overallDescription {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
-      align-self: stretch;
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer,
+.annotationEditorLayer .inkEditor > .resizers > .resizer,
+.annotationEditorLayer .stampEditor > .resizers > .resizer,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer {
+  width: var(--resizer-size);
+  height: var(--resizer-size);
+  background: content-box var(--resizer-bg-color);
+  border: var(--focus-outline-around);
+  border-radius: 2px;
+  position: absolute;
+}
 
-      & span {
-        align-self: stretch;
-      }
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer.topLeft,
+.annotationEditorLayer .inkEditor > .resizers > .resizer.topLeft,
+.annotationEditorLayer .stampEditor > .resizers > .resizer.topLeft,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer.topLeft {
+  top: var(--resizer-shift);
+  left: var(--resizer-shift);
+}
 
-      & .title {
-        font-size: 13px;
-        font-style: normal;
-        font-weight: 590;
-      }
-    }
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer.topMiddle,
+.annotationEditorLayer .inkEditor > .resizers > .resizer.topMiddle,
+.annotationEditorLayer .stampEditor > .resizers > .resizer.topMiddle,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer.topMiddle {
+  top: var(--resizer-shift);
+  left: calc(50% + var(--resizer-shift));
+}
 
-    & #addDescription {
-      display: flex;
-      flex-direction: column;
-      align-items: stretch;
-      gap: 8px;
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer.topRight,
+.annotationEditorLayer .inkEditor > .resizers > .resizer.topRight,
+.annotationEditorLayer .stampEditor > .resizers > .resizer.topRight,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer.topRight {
+  top: var(--resizer-shift);
+  right: var(--resizer-shift);
+}
 
-      & .descriptionArea {
-        flex: 1;
-        padding-inline: 24px 10px;
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer.middleRight,
+.annotationEditorLayer .inkEditor > .resizers > .resizer.middleRight,
+.annotationEditorLayer .stampEditor > .resizers > .resizer.middleRight,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer.middleRight {
+  top: calc(50% + var(--resizer-shift));
+  right: var(--resizer-shift);
+}
 
-        textarea {
-          width: 100%;
-          min-height: 75px;
-        }
-      }
-    }
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer.bottomRight,
+.annotationEditorLayer .inkEditor > .resizers > .resizer.bottomRight,
+.annotationEditorLayer .stampEditor > .resizers > .resizer.bottomRight,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer.bottomRight {
+  bottom: var(--resizer-shift);
+  right: var(--resizer-shift);
+}
 
-    & #buttons {
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-start;
-      gap: 8px;
-      align-self: stretch;
-    }
-  }
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer .inkEditor > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer .stampEditor > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer.bottomMiddle {
+  bottom: var(--resizer-shift);
+  left: calc(50% + var(--resizer-shift));
+}
+
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer .inkEditor > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer .stampEditor > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer.bottomLeft {
+  bottom: var(--resizer-shift);
+  left: var(--resizer-shift);
+}
+
+.annotationEditorLayer .freeTextEditor > .resizers > .resizer.middleLeft,
+.annotationEditorLayer .inkEditor > .resizers > .resizer.middleLeft,
+.annotationEditorLayer .stampEditor > .resizers > .resizer.middleLeft,
+.annotationEditorLayer .signatureEditor > .resizers > .resizer.middleLeft {
+  top: calc(50% + var(--resizer-shift));
+  left: var(--resizer-shift);
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="0"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="270"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="180"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="90"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="0"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="270"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="180"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="90"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] > .resizers > .resizer.bottomRight {
+  cursor: nwse-resize;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="0"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="270"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="180"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="90"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="0"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="270"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="180"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="90"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] > .resizers > .resizer.bottomMiddle {
+  cursor: ns-resize;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="0"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="270"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="180"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="90"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="0"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="270"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="180"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="90"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] > .resizers > .resizer.bottomLeft {
+  cursor: nesw-resize;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="0"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="270"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="180"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="90"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="0"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="270"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="180"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="90"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] > .resizers > .resizer.middleLeft {
+  cursor: ew-resize;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] > .resizers > .resizer.topLeft,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] > .resizers > .resizer.bottomRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] > .resizers > .resizer.bottomRight {
+  cursor: nesw-resize;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] > .resizers > .resizer.topMiddle,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] > .resizers > .resizer.bottomMiddle,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] > .resizers > .resizer.bottomMiddle {
+  cursor: ew-resize;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] > .resizers > .resizer.topRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] > .resizers > .resizer.bottomLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] > .resizers > .resizer.bottomLeft {
+  cursor: nwse-resize;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] > .resizers > .resizer.middleRight,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] > .resizers > .resizer.middleLeft,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] > .resizers > .resizer.middleLeft {
+  cursor: ns-resize;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] .editToolbar {
+  rotate: 270deg;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] .editToolbar:dir(ltr),
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] .editToolbar:dir(ltr),
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] .editToolbar:dir(ltr),
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] .editToolbar:dir(ltr) {
+  right: calc(0px - var(--editor-toolbar-vert-offset));
+  top: 0;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="90"] .editToolbar:dir(rtl),
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="0"] .editToolbar:dir(rtl),
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="270"] .editToolbar:dir(rtl),
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="180"] .editToolbar:dir(rtl) {
+  right: calc(100% + var(--editor-toolbar-vert-offset));
+  top: 0;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="180"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="90"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="0"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="270"] .editToolbar {
+  rotate: 180deg;
+  right: 100%;
+  top: calc(0pc - var(--editor-toolbar-vert-offset));
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] .editToolbar,
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] .editToolbar {
+  rotate: 90deg;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] .editToolbar:dir(ltr),
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] .editToolbar:dir(ltr),
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] .editToolbar:dir(ltr),
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] .editToolbar:dir(ltr) {
+  right: calc(100% + var(--editor-toolbar-vert-offset));
+  top: 100%;
+}
+
+.annotationEditorLayer[data-main-rotation="0"] [data-editor-rotation="270"] .editToolbar:dir(rtl),
+.annotationEditorLayer[data-main-rotation="90"] [data-editor-rotation="180"] .editToolbar:dir(rtl),
+.annotationEditorLayer[data-main-rotation="180"] [data-editor-rotation="90"] .editToolbar:dir(rtl),
+.annotationEditorLayer[data-main-rotation="270"] [data-editor-rotation="0"] .editToolbar:dir(rtl) {
+  left: calc(0px - var(--editor-toolbar-vert-offset));
+  top: 0;
+}
+
+.dialog.altText::backdrop {
+  /* This is needed to avoid to darken the image the user want to describe. */
+  mask: url(#alttext-manager-mask);
+}
+
+/* See alt_text_manager.js */
+.dialog.altText.positioned {
+  margin: 0;
+}
+
+.dialog.altText #altTextContainer {
+  width: 300px;
+  height: fit-content;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+.dialog.altText #altTextContainer #overallDescription {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  align-self: stretch;
+}
+
+.dialog.altText #altTextContainer #overallDescription span {
+  align-self: stretch;
+}
+
+.dialog.altText #altTextContainer #overallDescription .title {
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 590;
+}
+
+.dialog.altText #altTextContainer #addDescription {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.dialog.altText #altTextContainer #addDescription .descriptionArea {
+  flex: 1;
+  padding-left: 24px;
+  padding-right: 10px;
+}
+
+.dialog.altText #altTextContainer #addDescription .descriptionArea textarea {
+  width: 100%;
+  min-height: 75px;
+}
+
+.dialog.altText #altTextContainer #buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
 }
 
 .dialog.newAltText {
   --new-alt-text-ai-disclaimer-icon: url(images/altText_disclaimer.svg);
   --new-alt-text-spinner-icon: url(images/altText_spinner.svg);
-  --preview-image-bg-color: light-dark(#f0f0f4, #2b2a33);
+  --preview-image-bg-color: #f0f0f4;
   --preview-image-border: none;
-
-  @media screen and (forced-colors: active) {
-    --preview-image-bg-color: ButtonFace;
-    --preview-image-border: 1px solid ButtonText;
-  }
 
   width: 80%;
   max-width: 570px;
   min-width: 300px;
   padding: 0;
+}
 
-  &.noAi {
-    #newAltTextDisclaimer,
-    #newAltTextCreateAutomatically {
-      display: none !important;
-    }
-  }
-
-  &.aiInstalling {
-    #newAltTextCreateAutomatically {
-      display: none !important;
-    }
-    #newAltTextDownloadModel {
-      display: flex !important;
-    }
-  }
-
-  &.error {
-    #newAltTextNotNow {
-      display: none !important;
-    }
-
-    #newAltTextCancel {
-      display: inline-block !important;
-    }
-  }
-
-  &:not(.error) #newAltTextError {
-    display: none !important;
-  }
-
-  #newAltTextContainer {
-    display: flex;
-    width: auto;
-    padding: 16px;
-    flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-start;
-    gap: 12px;
-    flex: 0 1 auto;
-    line-height: normal;
-
-    #mainContent {
-      display: flex;
-      justify-content: flex-end;
-      align-items: flex-start;
-      gap: 12px;
-      align-self: stretch;
-      flex: 1 1 auto;
-
-      #descriptionAndSettings {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 16px;
-        flex: 1 0 0;
-        align-self: stretch;
-      }
-
-      #descriptionInstruction {
-        display: flex;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-        align-self: stretch;
-        flex: 1 1 auto;
-
-        #newAltTextDescriptionContainer {
-          width: 100%;
-          height: 70px;
-          position: relative;
-
-          textarea {
-            width: 100%;
-            height: 100%;
-            padding: 8px;
-
-            &::placeholder {
-              color: var(--text-secondary-color);
-            }
-          }
-
-          .altTextSpinner {
-            display: none;
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            inset-inline-start: 8px;
-            inset-block-start: 8px;
-            mask-size: cover;
-            background-color: var(--text-secondary-color);
-            pointer-events: none;
-          }
-
-          &.loading {
-            textarea::placeholder {
-              color: transparent;
-            }
-
-            .altTextSpinner {
-              display: inline-block;
-              mask-image: var(--new-alt-text-spinner-icon);
-            }
-          }
-        }
-
-        #newAltTextDescription {
-          font-size: 11px;
-        }
-
-        #newAltTextDisclaimer {
-          display: flex;
-          flex-direction: row;
-          align-items: flex-start;
-          gap: 4px;
-          font-size: 11px;
-
-          &::before {
-            content: "";
-            display: inline-block;
-            width: 17px;
-            height: 16px;
-            mask-image: var(--new-alt-text-ai-disclaimer-icon);
-            mask-size: cover;
-            background-color: var(--text-secondary-color);
-            flex: 1 0 auto;
-          }
-        }
-      }
-
-      #newAltTextDownloadModel {
-        display: flex;
-        align-items: center;
-        gap: 4px;
-        align-self: stretch;
-
-        &::before {
-          content: "";
-          display: inline-block;
-          width: 16px;
-          height: 16px;
-          mask-image: var(--new-alt-text-spinner-icon);
-          mask-size: cover;
-          background-color: var(--text-secondary-color);
-        }
-      }
-
-      #newAltTextImagePreview {
-        width: 180px;
-        aspect-ratio: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex: 0 0 auto;
-        background-color: var(--preview-image-bg-color);
-        border: var(--preview-image-border);
-
-        > canvas {
-          max-width: 100%;
-          max-height: 100%;
-        }
-      }
-    }
+@media (prefers-color-scheme: dark) {
+  .dialog.newAltText {
+    --preview-image-bg-color: #2b2a33;
   }
 }
 
-.colorPicker {
-  --hover-outline-color: light-dark(#0250bb, #80ebff);
-  --selected-outline-color: light-dark(#0060df, #aaf2ff);
-  --swatch-border-color: light-dark(#cfcfd8, #52525e);
+@media screen and (forced-colors: active) {
+  .dialog.newAltText {
+    --preview-image-bg-color: ButtonFace;
+    --preview-image-border: 1px solid ButtonText;
+  }
+}
 
-  @media screen and (forced-colors: active) {
+.dialog.newAltText.noAi #newAltTextDisclaimer,
+.dialog.newAltText.noAi #newAltTextCreateAutomatically {
+  display: none !important;
+}
+
+.dialog.newAltText.aiInstalling #newAltTextCreateAutomatically {
+  display: none !important;
+}
+
+.dialog.newAltText.aiInstalling #newAltTextDownloadModel {
+  display: flex !important;
+}
+
+.dialog.newAltText.error #newAltTextNotNow {
+  display: none !important;
+}
+
+.dialog.newAltText.error #newAltTextCancel {
+  display: inline-block !important;
+}
+
+.dialog.newAltText:not(.error) #newAltTextError {
+  display: none !important;
+}
+
+.dialog.newAltText #newAltTextContainer {
+  display: flex;
+  width: auto;
+  padding: 16px;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 12px;
+  flex: 0 1 auto;
+  line-height: normal;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  gap: 12px;
+  align-self: stretch;
+  flex: 1 1 auto;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionAndSettings {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  flex: 1 0 0;
+  align-self: stretch;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+  flex: 1 1 auto;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDescriptionContainer {
+  width: 100%;
+  height: 70px;
+  position: relative;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDescriptionContainer textarea {
+  width: 100%;
+  height: 100%;
+  padding: 8px;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDescriptionContainer textarea::placeholder {
+  color: var(--text-secondary-color);
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDescriptionContainer .altTextSpinner {
+  display: none;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  left: 8px;
+  top: 8px;
+  mask-size: cover;
+  background-color: var(--text-secondary-color);
+  pointer-events: none;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDescriptionContainer.loading textarea::placeholder {
+  color: transparent;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDescriptionContainer.loading .altTextSpinner {
+  display: inline-block;
+  mask-image: var(--new-alt-text-spinner-icon);
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDescription {
+  font-size: 11px;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDisclaimer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 4px;
+  font-size: 11px;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #descriptionInstruction #newAltTextDisclaimer::before {
+  content: "";
+  display: inline-block;
+  width: 17px;
+  height: 16px;
+  mask-image: var(--new-alt-text-ai-disclaimer-icon);
+  mask-size: cover;
+  background-color: var(--text-secondary-color);
+  flex: 1 0 auto;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #newAltTextDownloadModel {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #newAltTextDownloadModel::before {
+  content: "";
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  mask-image: var(--new-alt-text-spinner-icon);
+  mask-size: cover;
+  background-color: var(--text-secondary-color);
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #newAltTextImagePreview {
+  width: 180px;
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 0 0 auto;
+  background-color: var(--preview-image-bg-color);
+  border: var(--preview-image-border);
+}
+
+.dialog.newAltText #newAltTextContainer #mainContent #newAltTextImagePreview > canvas {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+.colorPicker {
+  --hover-outline-color: #0250bb;
+  --selected-outline-color: #0060df;
+  --swatch-border-color: #cfcfd8;
+}
+
+@media (prefers-color-scheme: dark) {
+  .colorPicker {
+    --hover-outline-color: #80ebff;
+    --selected-outline-color: #aaf2ff;
+    --swatch-border-color: #52525e;
+  }
+}
+
+@media screen and (forced-colors: active) {
+  .colorPicker {
     --hover-outline-color: Highlight;
     --selected-outline-color: var(--hover-outline-color);
     --swatch-border-color: ButtonText;
   }
-
-  .swatch {
-    width: 16px;
-    height: 16px;
-    border: 1px solid var(--swatch-border-color);
-    border-radius: 100%;
-    outline-offset: 2px;
-    box-sizing: border-box;
-    forced-color-adjust: none;
-  }
-
-  button:is(:hover, .selected) > .swatch {
-    border: none;
-  }
 }
 
-.annotationEditorLayer {
-  &[data-main-rotation="0"] {
-    .highlightEditor:not(.free) > .editToolbar {
-      rotate: 0deg;
-    }
-  }
+.colorPicker .swatch {
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--swatch-border-color);
+  border-radius: 100%;
+  outline-offset: 2px;
+  box-sizing: border-box;
+  forced-color-adjust: none;
+}
 
-  &[data-main-rotation="90"] {
-    .highlightEditor:not(.free) > .editToolbar {
-      rotate: 270deg;
-    }
-  }
+.colorPicker button:is(:hover, .selected) > .swatch {
+  border: none;
+}
 
-  &[data-main-rotation="180"] {
-    .highlightEditor:not(.free) > .editToolbar {
-      rotate: 180deg;
-    }
-  }
+.annotationEditorLayer[data-main-rotation="0"] .highlightEditor:not(.free) > .editToolbar {
+  rotate: 0deg;
+}
 
-  &[data-main-rotation="270"] {
-    .highlightEditor:not(.free) > .editToolbar {
-      rotate: 90deg;
-    }
-  }
+.annotationEditorLayer[data-main-rotation="90"] .highlightEditor:not(.free) > .editToolbar {
+  rotate: 270deg;
+}
 
-  .highlightEditor {
-    position: absolute;
-    background: transparent;
-    z-index: 1;
-    cursor: auto;
-    max-width: 100%;
-    max-height: 100%;
-    border: none;
-    outline: none;
-    pointer-events: none;
-    transform-origin: 0 0;
+.annotationEditorLayer[data-main-rotation="180"] .highlightEditor:not(.free) > .editToolbar {
+  rotate: 180deg;
+}
 
-    &:not(.free) {
-      transform: none;
-    }
+.annotationEditorLayer[data-main-rotation="270"] .highlightEditor:not(.free) > .editToolbar {
+  rotate: 90deg;
+}
 
-    .internal {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: auto;
-    }
+.annotationEditorLayer .highlightEditor {
+  position: absolute;
+  background: transparent;
+  z-index: 1;
+  cursor: auto;
+  max-width: 100%;
+  max-height: 100%;
+  border: none;
+  outline: none;
+  pointer-events: none;
+  transform-origin: 0 0;
+}
 
-    &.disabled .internal {
-      pointer-events: none;
-    }
+.annotationEditorLayer .highlightEditor:not(.free) {
+  transform: none;
+}
 
-    &.selectedEditor {
-      .internal {
-        cursor: pointer;
-      }
-    }
+.annotationEditorLayer .highlightEditor .internal {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
 
-    .editToolbar {
-      --editor-toolbar-colorpicker-arrow-image: url(images/toolbarButton-menuArrow.svg);
+.annotationEditorLayer .highlightEditor.disabled .internal {
+  pointer-events: none;
+}
 
-      transform-origin: center !important;
+.annotationEditorLayer .highlightEditor.selectedEditor .internal {
+  cursor: pointer;
+}
 
-      .buttons {
-        .colorPicker {
-          position: relative;
-          width: auto;
-          display: flex;
-          justify-content: center;
-          align-items: center;
-          gap: 4px;
-          padding: 4px;
+.annotationEditorLayer .highlightEditor .editToolbar {
+  --editor-toolbar-colorpicker-arrow-image: url(images/toolbarButton-menuArrow.svg);
 
-          &::after {
-            content: "";
-            mask-image: var(--editor-toolbar-colorpicker-arrow-image);
-            mask-repeat: no-repeat;
-            mask-position: center;
-            display: inline-block;
-            background-color: var(--editor-toolbar-fg-color);
-            width: 12px;
-            height: 12px;
-          }
+  transform-origin: center !important;
+}
 
-          &:hover::after {
-            background-color: var(--editor-toolbar-hover-fg-color);
-          }
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker {
+  position: relative;
+  width: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+}
 
-          &:has(.dropdown:not(.hidden)) {
-            background-color: var(--editor-toolbar-hover-bg-color);
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker::after {
+  content: "";
+  mask-image: var(--editor-toolbar-colorpicker-arrow-image);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  display: inline-block;
+  background-color: var(--editor-toolbar-fg-color);
+  width: 12px;
+  height: 12px;
+}
 
-            &::after {
-              scale: -1;
-            }
-          }
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker:hover::after {
+  background-color: var(--editor-toolbar-hover-fg-color);
+}
 
-          .dropdown {
-            position: absolute;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            gap: 11px;
-            padding-block: 8px;
-            border-radius: 6px;
-            background-color: var(--editor-toolbar-bg-color);
-            border: 1px solid var(--editor-toolbar-border-color);
-            box-shadow: var(--editor-toolbar-shadow);
-            inset-block-start: calc(100% + 4px);
-            width: calc(100% + 2 * var(--editor-toolbar-padding));
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker:has(.dropdown:not(.hidden)) {
+  background-color: var(--editor-toolbar-hover-bg-color);
+}
 
-            button {
-              width: 100%;
-              height: auto;
-              border: none;
-              cursor: pointer;
-              display: flex;
-              justify-content: center;
-              align-items: center;
-              background: none;
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker:has(.dropdown:not(.hidden))::after {
+  scale: -1;
+}
 
-              &:is(:active, :focus-visible) {
-                outline: none;
-              }
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker .dropdown {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 11px;
+  padding-top: 8px;
+  padding-bottom: 8px;
+  border-radius: 6px;
+  background-color: var(--editor-toolbar-bg-color);
+  border: 1px solid var(--editor-toolbar-border-color);
+  box-shadow: var(--editor-toolbar-shadow);
+  top: calc(100% + 4px);
+  width: calc(100% + 2 * var(--editor-toolbar-padding));
+}
 
-              > .swatch {
-                outline-offset: 2px;
-              }
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker .dropdown button {
+  width: 100%;
+  height: auto;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+}
 
-              &[aria-selected="true"] > .swatch {
-                outline: 2px solid var(--selected-outline-color);
-              }
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker .dropdown button:is(:active, :focus-visible) {
+  outline: none;
+}
 
-              &:is(:hover, :active, :focus-visible) > .swatch {
-                outline: 2px solid var(--hover-outline-color);
-              }
-            }
-          }
-        }
-      }
-    }
-  }
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker .dropdown button > .swatch {
+  outline-offset: 2px;
+}
+
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker .dropdown button[aria-selected="true"] > .swatch {
+  outline: 2px solid var(--selected-outline-color);
+}
+
+.annotationEditorLayer .highlightEditor .editToolbar .buttons .colorPicker .dropdown button:is(:hover, :active, :focus-visible) > .swatch {
+  outline: 2px solid var(--hover-outline-color);
 }
 
 .editorParamsToolbar:has(#highlightParamsToolbarContainer) {
@@ -1217,186 +1416,201 @@
 
 #highlightParamsToolbarContainer {
   gap: 16px;
-  padding-inline: 10px;
-  padding-block-end: 12px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 12px;
+}
 
-  .colorPicker {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+#highlightParamsToolbarContainer .colorPicker {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-    .dropdown {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-direction: row;
-      height: auto;
+#highlightParamsToolbarContainer .colorPicker .dropdown {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: row;
+  height: auto;
+}
 
-      button {
-        width: auto;
-        height: auto;
-        border: none;
-        cursor: pointer;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        background: none;
-        flex: 0 0 auto;
-        padding: 0;
+#highlightParamsToolbarContainer .colorPicker .dropdown button {
+  width: auto;
+  height: auto;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  flex: 0 0 auto;
+  padding: 0;
+}
 
-        .swatch {
-          width: 24px;
-          height: 24px;
-        }
+#highlightParamsToolbarContainer .colorPicker .dropdown button .swatch {
+  width: 24px;
+  height: 24px;
+}
 
-        &:is(:active, :focus-visible) {
-          outline: none;
-        }
+#highlightParamsToolbarContainer .colorPicker .dropdown button:is(:active, :focus-visible) {
+  outline: none;
+}
 
-        &[aria-selected="true"] > .swatch {
-          outline: 2px solid var(--selected-outline-color);
-        }
+#highlightParamsToolbarContainer .colorPicker .dropdown button[aria-selected="true"] > .swatch {
+  outline: 2px solid var(--selected-outline-color);
+}
 
-        &:is(:hover, :active, :focus-visible) > .swatch {
-          outline: 2px solid var(--hover-outline-color);
-        }
-      }
-    }
+#highlightParamsToolbarContainer .colorPicker .dropdown button:is(:hover, :active, :focus-visible) > .swatch {
+  outline: 2px solid var(--hover-outline-color);
+}
+
+#highlightParamsToolbarContainer #editorHighlightThickness {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  align-self: stretch;
+}
+
+#highlightParamsToolbarContainer #editorHighlightThickness .editorParamsLabel {
+  height: auto;
+  align-self: stretch;
+}
+
+#highlightParamsToolbarContainer #editorHighlightThickness .thicknessPicker {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
+
+  --example-color: #bfbfc9;
+}
+
+@media (prefers-color-scheme: dark) {
+  #highlightParamsToolbarContainer #editorHighlightThickness .thicknessPicker {
+    --example-color: #80808e;
   }
+}
 
-  #editorHighlightThickness {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    align-self: stretch;
-
-    .editorParamsLabel {
-      height: auto;
-      align-self: stretch;
-    }
-
-    .thicknessPicker {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      align-self: stretch;
-
-      --example-color: light-dark(#bfbfc9, #80808e);
-
-      @media screen and (forced-colors: active) {
-        --example-color: CanvasText;
-      }
-
-      :is(& > .editorParamsSlider[disabled]) {
-        opacity: 0.4;
-      }
-
-      &::before,
-      &::after {
-        content: "";
-        width: 8px;
-        aspect-ratio: 1;
-        display: block;
-        border-radius: 100%;
-        background-color: var(--example-color);
-      }
-      &::after {
-        width: 24px;
-      }
-
-      .editorParamsSlider {
-        width: unset;
-        height: 14px;
-      }
-    }
+@media screen and (forced-colors: active) {
+  #highlightParamsToolbarContainer #editorHighlightThickness .thicknessPicker {
+    --example-color: CanvasText;
   }
+}
 
-  #editorHighlightVisibility {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-    align-self: stretch;
+#highlightParamsToolbarContainer #editorHighlightThickness .thicknessPicker .editorParamsSlider[disabled] {
+  opacity: 0.4;
+}
 
-    .divider {
-      --divider-color: light-dark(#d7d7db, #8f8f9d);
+#highlightParamsToolbarContainer #editorHighlightThickness .thicknessPicker::before,
+#highlightParamsToolbarContainer #editorHighlightThickness .thicknessPicker::after {
+  content: "";
+  width: 8px;
+  aspect-ratio: 1;
+  display: block;
+  border-radius: 100%;
+  background-color: var(--example-color);
+}
 
-      @media screen and (forced-colors: active) {
-        --divider-color: CanvasText;
-      }
+#highlightParamsToolbarContainer #editorHighlightThickness .thicknessPicker::after {
+  width: 24px;
+}
 
-      margin-block: 4px;
-      width: 100%;
-      height: 1px;
-      background-color: var(--divider-color);
-    }
+#highlightParamsToolbarContainer #editorHighlightThickness .thicknessPicker .editorParamsSlider {
+  width: unset;
+  height: 14px;
+}
 
-    .toggler {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      align-self: stretch;
-    }
+#highlightParamsToolbarContainer #editorHighlightVisibility {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  align-self: stretch;
+}
+
+#highlightParamsToolbarContainer #editorHighlightVisibility .divider {
+  --divider-color: #d7d7db;
+
+  margin-top: 4px;
+  margin-bottom: 4px;
+  width: 100%;
+  height: 1px;
+  background-color: var(--divider-color);
+}
+
+@media (prefers-color-scheme: dark) {
+  #highlightParamsToolbarContainer #editorHighlightVisibility .divider {
+    --divider-color: #8f8f9d;
   }
+}
+
+@media screen and (forced-colors: active) {
+  #highlightParamsToolbarContainer #editorHighlightVisibility .divider {
+    --divider-color: CanvasText;
+  }
+}
+
+#highlightParamsToolbarContainer #editorHighlightVisibility .toggler {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  align-self: stretch;
 }
 
 #altTextSettingsDialog {
   padding: 16px;
+}
 
-  #altTextSettingsContainer {
-    display: flex;
-    width: 573px;
-    flex-direction: column;
-    gap: 16px;
+#altTextSettingsDialog #altTextSettingsContainer {
+  display: flex;
+  width: 573px;
+  flex-direction: column;
+  gap: 16px;
+}
 
-    .mainContainer {
-      gap: 16px;
-    }
+#altTextSettingsDialog #altTextSettingsContainer .mainContainer {
+  gap: 16px;
+}
 
-    .description {
-      color: var(--text-secondary-color);
-    }
+#altTextSettingsDialog #altTextSettingsContainer .description {
+  color: var(--text-secondary-color);
+}
 
-    #aiModelSettings {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+#altTextSettingsDialog #altTextSettingsContainer #aiModelSettings {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 
-      button {
-        width: fit-content;
-      }
+#altTextSettingsDialog #altTextSettingsContainer #aiModelSettings button {
+  width: fit-content;
+}
 
-      &.download {
-        #deleteModelButton {
-          display: none;
-        }
-      }
+#altTextSettingsDialog #altTextSettingsContainer #aiModelSettings.download #deleteModelButton {
+  display: none;
+}
 
-      &:not(.download) {
-        #downloadModelButton {
-          display: none;
-        }
-      }
-    }
+#altTextSettingsDialog #altTextSettingsContainer #aiModelSettings:not(.download) #downloadModelButton {
+  display: none;
+}
 
-    #automaticAltText,
-    #altTextEditor {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
+#altTextSettingsDialog #altTextSettingsContainer #automaticAltText,
+#altTextSettingsDialog #altTextSettingsContainer #altTextEditor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
 
-    #createModelDescription,
-    #aiModelSettings,
-    #showAltTextDialogDescription {
-      padding-inline-start: 40px;
-    }
+#altTextSettingsDialog #altTextSettingsContainer #createModelDescription,
+#altTextSettingsDialog #altTextSettingsContainer #aiModelSettings,
+#altTextSettingsDialog #altTextSettingsContainer #showAltTextDialogDescription {
+  padding-left: 40px;
+}
 
-    #automaticSettings {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-  }
+#altTextSettingsDialog #altTextSettingsContainer #automaticSettings {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
