@@ -1,3 +1,33 @@
+**This is a fork of [https://github.com/mozilla/pdf.js](https://github.com/mozilla/pdf.js) made on June 17th 2025 to fix the incompatibility with Safari >= 16. The PR was not accepted because the PDF.js team mainly supports modern browsers (which is totally fair as Safari totally sucks).**
+
+## How to integrate this Safari-compatible version in your project
+
+1. Clone this repository:
+   ```bash
+   git clone https://github.com/nicolasdao/pdf.js.git
+   cd pdf.js
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Build the library:
+   ```bash
+   npx gulp generic
+   ```
+
+4. Find the built artifacts in `build/generic/build/`:
+   - **`pdf.mjs`** - The main library to import in your code:
+     ```javascript
+     import * as pdfjsLib from './path/to/pdf.mjs';
+     ```
+   - **`pdf.worker.mjs`** - The unminified worker (minify for production):
+     ```javascript
+     pdfjsLib.GlobalWorkerOptions.workerSrc = './path/to/pdf.worker.mjs';
+     ```
+
 # PDF.js [![CI](https://github.com/mozilla/pdf.js/actions/workflows/ci.yml/badge.svg?query=branch%3Amaster)](https://github.com/mozilla/pdf.js/actions/workflows/ci.yml?query=branch%3Amaster)
 
 [PDF.js](https://mozilla.github.io/pdf.js/) is a Portable Document Format (PDF) viewer that is built with HTML5.
